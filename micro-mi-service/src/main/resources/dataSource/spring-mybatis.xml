@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:mvc="http://www.springframework.org/schema/mvc"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans    
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd    
+                        http://www.springframework.org/schema/context    
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd    
+                        http://www.springframework.org/schema/mvc    
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd"> 
+                         
+	<!-- 引入包扫描 -->
+	<bean id="propertyConfigure" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:dataSource/jdbc.properties"></property>
+	</bean>
+	<!-- dataSource的配置 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<!-- 基本属性的配置 -->
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<!-- 配置初始化大小，最小、最大 -->
+		<property name="initialSize" value="${jdbc.initialSize}"/>
+		<property name="minIdle" value="${jdbc.minIdle}"/>
+		<property name="maxActive" value="${jdbc.maxActive}"/>
+		<!-- 配置获取连接等待超时时间 -->
+		<property name="maxWait" value="${jdbc.maxWait}"/>
+		<!-- 配置间隔多久进行一次检测，检测需要关闭的空闲连接，单位毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}"/>
+		<!-- 配置一个连接在池中最小的生存时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}"/>
+		<!-- <property name="poolPreparedStatements" value="${jdbc.poolPreparedStatements}"/> -->
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 --> 
+		<!-- <property name="maxPoolPreparedStatementPerConnectionSize" value="${jdbc.maxPoolPreparedStatementPerConnectionSize}"/> -->
+		<!-- 配置监控统计拦截的filters -->
+		<property name="filters" value="stat"/>
+	</bean>
+	
+	<!-- sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="mapperLocations" value="classpath:org/micro/mi/sys/dao/mapper/*.xml"></property>
+	</bean>
+	<!-- Dao下面所在的包名 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="org.micro.mi.*.dao"/>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+	</bean>
+	
+	
+	
+	
+	
+</beans>
